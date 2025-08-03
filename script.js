@@ -44,17 +44,19 @@ document.getElementById("generate").addEventListener("click", async () => {
   const hour = new Date().getHours();
   
   const prompt = `
-  Mi trovo a "${location}" e vorrei fare qualcosa ${useCustomDate ? `il giorno ${day} ${date}` : `oggi alle ${hour}:00`}.
-  Dividi la tua risposta in due sezioni con intestazioni chiare:
-  
-  ### ATTIVITÀ E COSE DA FARE
-  Elenca solo le attività o luoghi consigliati (es. locali, eventi, musei, mercati, ristoranti, cinema...) in elenco puntato. Ogni punto deve contenere una descrizione sintetica + un link se disponibile, in formato Markdown.
-  
-  ### ITINERARIO
-  Crea un elenco di orari e tappe, ognuna con una breve descrizione. Scrivi tutto in elenco puntato (es. “**14:00** – Visita al [Museo Morandi](https://...)”).
-  
-  Evita frasi introduttive, conclusioni o elementi inutili. Solo contenuti utili e ordinati.
-  `;
+Mi trovo a "${location}" e vorrei fare qualcosa ${useCustomDate ? `il giorno ${day} ${date}` : `oggi alle ${hour}:00`}.
+Tieni conto di eventuali festività locali o eventi in programma in quella zona in quella data (es. feste patronali, sagre, concerti, chiusure speciali o manifestazioni).
+
+Dividi la tua risposta in due sezioni con intestazioni chiare:
+
+### ATTIVITÀ E COSE DA FARE
+Elenca solo le attività o luoghi consigliati (es. locali, eventi, musei, mercati, ristoranti, cinema...) in elenco puntato. Ogni punto deve contenere una descrizione sintetica + un link se disponibile, in formato Markdown.
+
+### ITINERARIO
+Crea un elenco di orari e tappe, ognuna con una breve descrizione. Scrivi tutto in elenco puntato (es. “**14:00** – Visita al [Museo Morandi](https://...)”).
+
+Evita frasi introduttive, conclusioni o elementi inutili. Solo contenuti utili e ordinati.
+`;
 
   try {
     const response = await fetch("/.netlify/functions/gpt", {
