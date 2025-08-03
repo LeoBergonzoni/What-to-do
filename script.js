@@ -31,19 +31,30 @@ document.getElementById("generate").addEventListener("click", async () => {
   document.getElementById("loading").classList.remove("hidden");
   document.getElementById("results").classList.add("hidden");
 
+  let promptDate = new Date();
+  let useCustomDate = document.querySelector('input[name="time"]:checked').value === "custom";
+  const selectedDateInput = document.getElementById("custom-date").value;
+  
+  if (useCustomDate && selectedDateInput) {
+    promptDate = new Date(selectedDateInput);
+  }
+  
+  const day = promptDate.toLocaleDateString("it-IT", { weekday: 'long' });
+  const date = promptDate.toLocaleDateString("it-IT");
   const hour = new Date().getHours();
+  
   const prompt = `
-Mi trovo a "${location}" e sono le ${hour}:00. 
-Dividi la tua risposta in due sezioni con intestazioni chiare:
-
-### ATTIVITÀ E COSE DA FARE
-Elenca solo le attività o luoghi consigliati (es. locali, eventi, musei, mercati, ristoranti, cinema...) in elenco puntato. Ogni punto deve contenere una descrizione sintetica + un link se disponibile, in formato Markdown.
-
-### ITINERARIO
-Crea un elenco di orari e tappe, ognuna con una breve descrizione. Scrivi tutto in elenco puntato (es. “**14:00** – Visita al [Museo Morandi](https://...)”).
-
-Evita frasi introduttive, conclusioni o elementi inutili. Solo contenuti utili e ordinati.
-`;
+  Mi trovo a "${location}" e vorrei fare qualcosa ${useCustomDate ? `il giorno ${day} ${date}` : `oggi alle ${hour}:00`}.
+  Dividi la tua risposta in due sezioni con intestazioni chiare:
+  
+  ### ATTIVITÀ E COSE DA FARE
+  Elenca solo le attività o luoghi consigliati (es. locali, eventi, musei, mercati, ristoranti, cinema...) in elenco puntato. Ogni punto deve contenere una descrizione sintetica + un link se disponibile, in formato Markdown.
+  
+  ### ITINERARIO
+  Crea un elenco di orari e tappe, ognuna con una breve descrizione. Scrivi tutto in elenco puntato (es. “**14:00** – Visita al [Museo Morandi](https://...)”).
+  
+  Evita frasi introduttive, conclusioni o elementi inutili. Solo contenuti utili e ordinati.
+  `;
 
   try {
     const response = await fetch("/.netlify/functions/gpt", {
@@ -102,6 +113,14 @@ function copyContent(id) {
     .then(() => alert("Contenuto copiato!"))
     .catch(() => alert("Errore durante la copia"));
 }
+const radioButtons = document.querySelectorAll('input[name="time"]');
+const customDateContainer = document.getElementById("custom-date-container");
+
+radioButtons.forEach(radio => {
+  radio.addEventListener("change", () => {
+    customDateContainer.classList.toggle("hidden", document.querySelector('input[name="time"]:checked').value === "now");
+  });
+});
 
 document.getElementById("alternative").addEventListener("click", () => {
   document.getElementById("generate").click();

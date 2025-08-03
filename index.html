@@ -12,7 +12,7 @@
   <div class="container">
     <h1>🎯 Cosa Fare – What to Do</h1>
     <p class="description">
-      Non sai cosa fare adesso ma hai voglia di fare qualcosa?<br/>
+      Non sai cosa fare adesso o nei prossimi giorni ma hai voglia di fare qualcosa?<br/>
       Dicci dove ti trovi e ti consigliamo noi delle possibili attività, i migliori locali ed eventi aggiornati 
       e ti prepariamo l’itinerario.<br/>Inizia a fare qualcosa!
     </p>
@@ -22,6 +22,15 @@
       <button id="geolocate" class="secondary-btn">🌐 Geolocalizzami</button>
     </div>
     <input type="text" id="location" placeholder="Inserisci indirizzo, città o CAP" />
+
+    <div class="date-choice">
+      <label><input type="radio" name="time" value="now" checked> 🔸 Adesso</label>
+      <label><input type="radio" name="time" value="custom"> 🗓️ Un altro giorno</label>
+    </div>
+    
+    <div id="custom-date-container" class="hidden">
+      <input type="date" id="custom-date" class="custom-date" />
+    </div>
 
     <div class="button-container">
       <button id="generate" class="main-btn">🎡 What to do</button>
