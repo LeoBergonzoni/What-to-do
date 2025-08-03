@@ -40,7 +40,7 @@ Dividi la tua risposta in due sezioni con intestazioni chiare:
 Elenca solo le attività o luoghi consigliati (es. locali, eventi, musei, mercati, ristoranti, cinema...) in elenco puntato. Ogni punto deve contenere una descrizione sintetica + un link se disponibile, in formato Markdown.
 
 ### ITINERARIO
-Crea un elenco di orari e tappe, ognuna con una breve descrizione e un link se disponibile. Scrivi tutto in elenco puntato (es. “**14:00** – Visita al [Museo Morandi](https://...)”).
+Crea un elenco di orari e tappe, ognuna con una breve descrizione. Scrivi tutto in elenco puntato (es. “**14:00** – Visita al [Museo Morandi](https://...)”).
 
 Evita frasi introduttive, conclusioni o elementi inutili. Solo contenuti utili e ordinati.
 `;
@@ -102,3 +102,7 @@ function copyContent(id) {
     .then(() => alert("Contenuto copiato!"))
     .catch(() => alert("Errore durante la copia"));
 }
+
+document.getElementById("alternative").addEventListener("click", () => {
+  document.getElementById("generate").click();
+});
