@@ -1,8 +1,6 @@
-const apiKey = import.meta.env.VITE_OPENAI_API_KEY || ""; // fallback per Netlify env var
-
 document.getElementById("geolocate").addEventListener("click", () => {
   if (!navigator.geolocation) {
-    alert("Geolocalizzazione non supportata dal browser.");
+    alert("Geolocalizzazione non supportata.");
     return;
   }
 
@@ -13,8 +11,7 @@ document.getElementById("geolocate").addEventListener("click", () => {
     fetch(`https://nominatim.openstreetmap.org/reverse?lat=${latitude}&lon=${longitude}&format=json`)
       .then(response => response.json())
       .then(data => {
-        const location = data.display_name;
-        document.getElementById("location").value = location;
+        document.getElementById("location").value = data.display_name;
       });
   }
 
@@ -34,32 +31,26 @@ document.getElementById("generate").addEventListener("click", async () => {
   const prompt = `Mi trovo a "${location}" e sono le ${hour}:00. Suggeriscimi attività divertenti da fare ora, considerando l'orario e i posti vicini (musei, bar, cinema, eventi, ecc.). Includi link se disponibili. Infine crea un itinerario breve con orari consigliati.`;
 
   try {
-    const response = await fetch("https://api.openai.com/v1/chat/completions", {
+    const response = await fetch("/.netlify/functions/gpt", {
       method: "POST",
       headers: {
-        "Content-Type": "application/json",
-        "Authorization": `Bearer ${apiKey}`
+        "Content-Type": "application/json"
       },
-      body: JSON.stringify({
-        model: "gpt-4", // usa gpt-4 o gpt-3.5-turbo se preferisci
-        messages: [{ role: "user", content: prompt }],
-        temperature: 0.8
-      })
+      body: JSON.stringify({ prompt })
     });
 
     const data = await response.json();
-    const output = data.choices?.[0]?.message?.content || "Nessuna risposta generata.";
 
-    // Separazione grezza in due sezioni (può essere migliorata)
+    if (data.error) throw new Error(data.error);
+
+    const output = data.response;
     const [attivita, itinerario] = output.split(/Itinerario:|Itinerary:/i);
 
     document.getElementById("activities").textContent = attivita?.trim() || "Nessuna attività trovata.";
     document.getElementById("itinerary").textContent = itinerario?.trim() || "Nessun itinerario suggerito.";
-
     document.getElementById("results").classList.remove("hidden");
-  } catch (error) {
-    console.error("Errore nella richiesta:", error);
-    alert("Errore nella richiesta all'AI. Riprova più tardi.");
+  } catch (err) {
+    alert("Errore: " + err.message);
   }
 });
 
