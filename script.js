@@ -44,10 +44,27 @@ document.getElementById("generate").addEventListener("click", async () => {
     if (data.error) throw new Error(data.error);
 
     const output = data.response;
-    const [attivita, itinerario] = output.split(/Itinerario:|Itinerary:/i);
-
-    document.getElementById("activities").textContent = attivita?.trim() || "Nessuna attività trovata.";
-    document.getElementById("itinerary").textContent = itinerario?.trim() || "Nessun itinerario suggerito.";
+    function parseMarkdownLinks(text) {
+      return text.replace(/\[([^\]]+)\]\((https?:\/\/[^\s)]+)\)/g, '<a href="$2" target="_blank">$1</a>');
+    }
+    
+    const parts = output.split(/Itinerario consigliato:|Itinerario:|Itinerary:/i);
+    
+    const activitiesText = parts[0]?.trim() || "Nessuna attività trovata.";
+    const itineraryText = parts[1]?.trim() || "Nessun itinerario suggerito.";
+    
+    // Inserisci HTML (non textContent) per rendere i link cliccabili
+    document.getElementById("activities").innerHTML = parseMarkdownLinks(activitiesText);
+    
+    // Se l'itinerario ha struttura tipo elenco orari, preserva l'indentazione
+    const itineraryList = itineraryText
+    .split(/\n+/)
+    .filter(line => line.trim())
+    .map(line => `<li>${line.trim()}</li>`)
+    .join("");
+  
+  document.getElementById("itinerary").classList.add("timeline");
+  document.getElementById("itinerary").innerHTML = `<ul>${itineraryList}</ul>`;
     document.getElementById("results").classList.remove("hidden");
   } catch (err) {
     alert("Errore: " + err.message);
