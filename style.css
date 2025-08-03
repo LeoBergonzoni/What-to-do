@@ -41,6 +41,7 @@ h1 {
 }
 
 input[type="text"] {
+  font-size: 16px; /* già ok */
   width: 100%;
   padding: 10px;
   border-radius: 8px;
@@ -139,4 +140,15 @@ button {
   border-radius: 50%;
   border: 2px solid white;
   box-shadow: 0 0 0 2px #f4a623;
+}
+
+.loading {
+  text-align: center;
+  font-style: italic;
+  margin: 16px 0;
+  color: #cc6c2b;
+}
+
+.hidden {
+  display: none;
 }

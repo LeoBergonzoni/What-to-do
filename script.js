@@ -65,7 +65,9 @@ document.getElementById("generate").addEventListener("click", async () => {
   
   document.getElementById("itinerary").classList.add("timeline");
   document.getElementById("itinerary").innerHTML = `<ul>${itineraryList}</ul>`;
-    document.getElementById("results").classList.remove("hidden");
+  document.getElementById("loading").classList.add("hidden");
+  document.getElementById("loading").classList.remove("hidden");
+  document.getElementById("results").classList.add("hidden");
   } catch (err) {
     alert("Errore: " + err.message);
   }
