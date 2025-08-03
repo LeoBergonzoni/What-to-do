@@ -34,10 +34,16 @@ document.getElementById("generate").addEventListener("click", async () => {
   const hour = new Date().getHours();
   const prompt = `
 Mi trovo a "${location}" e sono le ${hour}:00. 
-Suggeriscimi:
-1. Una sezione chiamata "ATTIVITÀ E COSE DA FARE" con elenco puntato di cose da fare (locali, musei, mostre, cinema, eventi, ecc.) vicini alla mia posizione. Includi link se disponibili.
-2. Una seconda sezione chiamata "ITINERARIO" con orari precisi e attività da svolgere in ordine cronologico, come una tabella di marcia. 
-Mantieni una divisione ben visibile tra le due sezioni.`;
+Dividi la tua risposta in due sezioni con intestazioni chiare:
+
+### ATTIVITÀ E COSE DA FARE
+Elenca solo le attività o luoghi consigliati (es. locali, eventi, musei, mercati, ristoranti, cinema...) in elenco puntato. Ogni punto deve contenere una descrizione sintetica + un link se disponibile, in formato Markdown.
+
+### ITINERARIO
+Crea un elenco di orari e tappe, ognuna con una breve descrizione e un link se disponibile. Scrivi tutto in elenco puntato (es. “**14:00** – Visita al [Museo Morandi](https://...)”).
+
+Evita frasi introduttive, conclusioni o elementi inutili. Solo contenuti utili e ordinati.
+`;
 
   try {
     const response = await fetch("/.netlify/functions/gpt", {
@@ -53,29 +59,34 @@ Mantieni una divisione ben visibile tra le due sezioni.`;
 
     const output = data.response;
 
+    // Funzione per convertire link Markdown in <a>
     function parseMarkdownLinks(text) {
-      return text.replace(/\[([^\]]+)\]\((https?:\/\/[^\s)]+)\)/g, '<a href="$2" target="_blank">$1</a>');
+      return text
+        .replace(/\*\*/g, '') // Rimuove doppie **
+        .replace(/\[([^\]]+)\]\((https?:\/\/[^\s)]+)\)/g, '<a href="$2" target="_blank">$1</a>');
     }
 
-    // Parsing con prompt strutturato
-    const parts = output.split(/ITINERARIO/i);
-    const activitiesText = parts[0]?.split(/ATTIVITÀ E COSE DA FARE/i)[1]?.trim() || "Nessuna attività trovata.";
+    // Pulisce output e divide in due sezioni
+    const cleanOutput = output.replace(/\*\*/g, '');
+    const parts = cleanOutput.split(/### ITINERARIO/i);
+
+    const activitiesText = parts[0]?.split(/### ATTIVITÀ E COSE DA FARE/i)[1]?.trim() || "Nessuna attività trovata.";
     const itineraryText = parts[1]?.trim() || "Nessun itinerario suggerito.";
 
-    // Inserisci le attività con link HTML
+    // Attività con link cliccabili
     document.getElementById("activities").innerHTML = parseMarkdownLinks(activitiesText);
 
-    // Format itinerario in lista a blocchi
-    const itineraryList = itineraryText
+    // Itinerario formattato con link
+    const itineraryItems = itineraryText
       .split(/\n+/)
       .filter(line => line.trim())
-      .map(line => `<li>${line.trim()}</li>`)
+      .map(line => `<li>${parseMarkdownLinks(line.trim())}</li>`)
       .join("");
 
     document.getElementById("itinerary").classList.add("timeline");
-    document.getElementById("itinerary").innerHTML = `<ul>${itineraryList}</ul>`;
+    document.getElementById("itinerary").innerHTML = `<ul>${itineraryItems}</ul>`;
 
-    // Nasconde il loading e mostra i risultati
+    // Mostra i risultati e nasconde il messaggio di caricamento
     document.getElementById("loading").classList.add("hidden");
     document.getElementById("results").classList.remove("hidden");
 
