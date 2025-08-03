@@ -27,6 +27,10 @@ document.getElementById("generate").addEventListener("click", async () => {
     return;
   }
 
+  // Mostra il messaggio di caricamento e nasconde i risultati
+  document.getElementById("loading").classList.remove("hidden");
+  document.getElementById("results").classList.add("hidden");
+
   const hour = new Date().getHours();
   const prompt = `Mi trovo a "${location}" e sono le ${hour}:00. Suggeriscimi attività divertenti da fare ora, considerando l'orario e i posti vicini (musei, bar, cinema, eventi, ecc.). Includi link se disponibili. Infine crea un itinerario breve con orari consigliati.`;
 
@@ -40,35 +44,37 @@ document.getElementById("generate").addEventListener("click", async () => {
     });
 
     const data = await response.json();
-
     if (data.error) throw new Error(data.error);
 
     const output = data.response;
+
     function parseMarkdownLinks(text) {
       return text.replace(/\[([^\]]+)\]\((https?:\/\/[^\s)]+)\)/g, '<a href="$2" target="_blank">$1</a>');
     }
-    
+
     const parts = output.split(/Itinerario consigliato:|Itinerario:|Itinerary:/i);
-    
     const activitiesText = parts[0]?.trim() || "Nessuna attività trovata.";
     const itineraryText = parts[1]?.trim() || "Nessun itinerario suggerito.";
-    
-    // Inserisci HTML (non textContent) per rendere i link cliccabili
+
+    // Mostra le attività con link HTML
     document.getElementById("activities").innerHTML = parseMarkdownLinks(activitiesText);
-    
-    // Se l'itinerario ha struttura tipo elenco orari, preserva l'indentazione
+
+    // Itinerario a blocchi con elenco
     const itineraryList = itineraryText
-    .split(/\n+/)
-    .filter(line => line.trim())
-    .map(line => `<li>${line.trim()}</li>`)
-    .join("");
-  
-  document.getElementById("itinerary").classList.add("timeline");
-  document.getElementById("itinerary").innerHTML = `<ul>${itineraryList}</ul>`;
-  document.getElementById("loading").classList.add("hidden");
-  document.getElementById("loading").classList.remove("hidden");
-  document.getElementById("results").classList.add("hidden");
+      .split(/\n+/)
+      .filter(line => line.trim())
+      .map(line => `<li>${line.trim()}</li>`)
+      .join("");
+
+    document.getElementById("itinerary").classList.add("timeline");
+    document.getElementById("itinerary").innerHTML = `<ul>${itineraryList}</ul>`;
+
+    // Nasconde il loading e mostra i risultati
+    document.getElementById("loading").classList.add("hidden");
+    document.getElementById("results").classList.remove("hidden");
+
   } catch (err) {
+    document.getElementById("loading").classList.add("hidden");
     alert("Errore: " + err.message);
   }
 });
