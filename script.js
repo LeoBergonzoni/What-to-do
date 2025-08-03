@@ -45,7 +45,7 @@ document.getElementById("generate").addEventListener("click", async () => {
   
   const prompt = `
 Mi trovo a "${location}" e vorrei fare qualcosa ${useCustomDate ? `il giorno ${day} ${date}` : `oggi alle ${hour}:00`}.
-Tieni conto di eventuali festività locali o eventi in programma in quella zona in quella data (es. feste patronali, sagre, concerti, chiusure speciali o manifestazioni).
+Se nella zona di "${location}" ci sono festività o eventi tipici (es. feste patronali, sagre, concerti, chiusure speciali o manifestazioni) previsti per il giorno ${day} ${date}, includili nelle attività e nell’itinerario. Se non ci sono informazioni note, suggerisci comunque attività valide per quella data.
 
 Dividi la tua risposta in due sezioni con intestazioni chiare:
 
