@@ -1,0 +1,45 @@
+<!DOCTYPE html>
+<html lang="it">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0"/>
+  <title>Cosa Fare – What to Do</title>
+  <link rel="stylesheet" href="style.css" />
+</head>
+<body>
+  <div class="container">
+    <h1>🎯 Cosa Fare – What to Do</h1>
+    <p class="description">
+      Non sai cosa fare adesso ma hai voglia di fare qualcosa?<br/>
+      Dicci dove ti trovi e ti consigliamo noi delle possibili attività, i migliori locali ed eventi aggiornati 
+      e ti prepariamo l’itinerario.<br/>Inizia a fare qualcosa!
+    </p>
+
+    <div class="location-row">
+      <label for="location">📍 Dove ti trovi?</label>
+      <button id="geolocate" class="secondary-btn">🌐 Geolocalizzami</button>
+    </div>
+    <input type="text" id="location" placeholder="Inserisci indirizzo, città o CAP" />
+
+    <div class="button-container">
+      <button id="generate" class="main-btn">🎡 What to do</button>
+    </div>
+
+    <div id="results" class="hidden">
+      <div class="section">
+        <h2>🎭 Attività e cose da fare</h2>
+        <div id="activities" class="content-box"></div>
+        <button class="copy-btn" onclick="copyContent('activities')">📋 Copia</button>
+      </div>
+
+      <div class="section">
+        <h2>🗺️ Itinerario</h2>
+        <div id="itinerary" class="content-box"></div>
+        <button class="copy-btn" onclick="copyContent('itinerary')">📋 Copia</button>
+      </div>
+    </div>
+  </div>
+
+  <script src="script.js"></script>
+</body>
+</html>
