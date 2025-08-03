@@ -32,7 +32,12 @@ document.getElementById("generate").addEventListener("click", async () => {
   document.getElementById("results").classList.add("hidden");
 
   const hour = new Date().getHours();
-  const prompt = `Mi trovo a "${location}" e sono le ${hour}:00. Suggeriscimi attività divertenti da fare ora, considerando l'orario e i posti vicini (musei, bar, cinema, eventi, ecc.). Includi link se disponibili. Infine crea un itinerario breve con orari consigliati.`;
+  const prompt = `
+Mi trovo a "${location}" e sono le ${hour}:00. 
+Suggeriscimi:
+1. Una sezione chiamata "ATTIVITÀ E COSE DA FARE" con elenco puntato di cose da fare (locali, musei, mostre, cinema, eventi, ecc.) vicini alla mia posizione. Includi link se disponibili.
+2. Una seconda sezione chiamata "ITINERARIO" con orari precisi e attività da svolgere in ordine cronologico, come una tabella di marcia. 
+Mantieni una divisione ben visibile tra le due sezioni.`;
 
   try {
     const response = await fetch("/.netlify/functions/gpt", {
@@ -52,14 +57,15 @@ document.getElementById("generate").addEventListener("click", async () => {
       return text.replace(/\[([^\]]+)\]\((https?:\/\/[^\s)]+)\)/g, '<a href="$2" target="_blank">$1</a>');
     }
 
-    const parts = output.split(/Itinerario consigliato:|Itinerario:|Itinerary:/i);
-    const activitiesText = parts[0]?.trim() || "Nessuna attività trovata.";
+    // Parsing con prompt strutturato
+    const parts = output.split(/ITINERARIO/i);
+    const activitiesText = parts[0]?.split(/ATTIVITÀ E COSE DA FARE/i)[1]?.trim() || "Nessuna attività trovata.";
     const itineraryText = parts[1]?.trim() || "Nessun itinerario suggerito.";
 
-    // Mostra le attività con link HTML
+    // Inserisci le attività con link HTML
     document.getElementById("activities").innerHTML = parseMarkdownLinks(activitiesText);
 
-    // Itinerario a blocchi con elenco
+    // Format itinerario in lista a blocchi
     const itineraryList = itineraryText
       .split(/\n+/)
       .filter(line => line.trim())
